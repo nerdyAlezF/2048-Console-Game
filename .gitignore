@@ -89,6 +89,9 @@ claude-*
 *claude*
 *.claude
 
+# Codex
+AGENTS.md
+
 # Temporary files
 *.tmp
 *.temp

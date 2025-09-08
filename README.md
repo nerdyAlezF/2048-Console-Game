@@ -13,8 +13,19 @@ This implementation focuses on clean architecture, testability, and correctness 
 - Game-over detection when no valid moves remain
 - Console-based user interface
 - Board import and export
+- AI move suggestion system with intelligent heuristics
 - Modular structure with comprehensive unit tests
 - Written Integration Test
+
+
+## AI System
+The game includes an intelligent AI assistant that analyzes the board state and suggests
+optimal moves using:
+- Empty tile counting (more empty tiles = better position)
+- Monotonicity scoring (ascending sequences preferred)
+- Corner positioning bonus (largest tile in corner = strategic advantage)
+
+Press **H** during gameplay to get AI move suggestions.
 
 ---
 
@@ -31,6 +42,17 @@ python main.py
 
 ---
 
+## Game Controls
+- **W** - Move Up
+- **A** - Move Left
+- **S** - Move Down
+- **D** - Move Right
+- **H** - Get AI Hint (move suggestion)
+- **R** - Restart Game
+- **Q** - Quit Game
+
+--
+
 ## Running Tests
 
 Main test suite (all tests):
@@ -45,6 +67,7 @@ Individual test modules:
 python3 -m unittest tests.test_initialization -v
 python3 -m unittest tests.test_movement -v
 python3 -m unittest tests.test_main -v
+python3 -m unittest tests.test_game_ai -v
 python3 -m unittest tests.test_helper_methods -v
 ```
 

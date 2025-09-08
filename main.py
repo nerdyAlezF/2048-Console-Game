@@ -17,6 +17,7 @@ def print_instructions():
     print("  A - Move Left") 
     print("  S - Move Down")
     print("  D - Move Right")
+    print("  H - AI Hint (get move suggestion)")
     print("  R - Restart Game")
     print("  Q - Quit Game")
     print("="*50)
@@ -25,7 +26,7 @@ def print_instructions():
 def get_user_input():
     """Get and validate user input."""
     try:
-        move = input("\nEnter your move (W/A/S/D/R/Q): ").strip().upper()
+        move = input("\nEnter your move (W/A/S/D/H/R/Q): ").strip().upper()
         return move
     except (KeyboardInterrupt, EOFError):
         print("\nGame interrupted. Goodbye!")
@@ -74,6 +75,21 @@ def main():
                 game.restart_game()
                 print("\nGame restarted!")
             continue
+        elif move == 'H':
+            # Get AI hint
+            ai = game.get_ai()
+            best_move = ai.get_best_move()
+            if best_move:
+                move_names = {
+                    'up': 'W (Up)',
+                    'left': 'A (Left)', 
+                    'down': 'S (Down)',
+                    'right': 'D (Right)'
+                }
+                print(f"\n AI Suggestion: {move_names[best_move]}")
+            else:
+                print("\n AI Suggestion: No moves available!")
+            continue
         elif move == 'W':
             moved = game.move_up()
         elif move == 'A':
@@ -83,7 +99,7 @@ def main():
         elif move == 'D':
             moved = game.move_right()
         else:
-            print("Invalid input! Use W/A/S/D/R to move or Q to quit.")
+            print("Invalid input! Use W/A/S/D/H/R to move or Q to quit.")
             continue
         
         # Provide feedback if no movement occurred

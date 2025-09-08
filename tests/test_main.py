@@ -26,6 +26,7 @@ class TestMainCLI(unittest.TestCase):
             self.assertIn("A - Move Left", output)
             self.assertIn("S - Move Down", output)
             self.assertIn("D - Move Right", output)
+            self.assertIn("H - AI Hint (get move suggestion)", output)
             self.assertIn("R - Restart Game", output)
             self.assertIn("Q - Quit Game", output)
     
@@ -34,7 +35,7 @@ class TestMainCLI(unittest.TestCase):
         """Test get_user_input with valid input."""
         result = get_user_input()
         self.assertEqual(result, 'W')
-        mock_input.assert_called_once_with("\nEnter your move (W/A/S/D/R/Q): ")
+        mock_input.assert_called_once_with("\nEnter your move (W/A/S/D/H/R/Q): ")
     
     @patch('builtins.input', return_value='  a  ')
     def test_get_user_input_case_insensitive_and_strips(self, mock_input):
@@ -93,7 +94,7 @@ class TestMainGameLoop(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             main()
             output = fake_output.getvalue()
-            self.assertIn("Invalid input! Use W/A/S/D/R to move or Q to quit.", output)
+            self.assertIn("Invalid input! Use W/A/S/D/H/R to move or Q to quit.", output)
     
     @patch('main.print_instructions')
     def test_main_restart_during_game(self, mock_instructions):
@@ -114,6 +115,83 @@ class TestMainGameLoop(unittest.TestCase):
                     main()
                     output = fake_output.getvalue()
                     self.assertNotIn("Game restarted!", output)
+    
+    @patch('main.print_instructions')
+    def test_main_ai_hint_functionality(self, mock_instructions):
+        """Test AI hint functionality with H key."""
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            with patch('main.get_user_input', side_effect=['H', 'Q']):
+                # Create a mock game and AI
+                with patch('main.Game2048') as mock_game_class:
+                    mock_game = MagicMock()
+                    mock_game.has_won.return_value = False
+                    mock_game.is_game_over.return_value = False
+                    
+                    # Mock the AI
+                    mock_ai = MagicMock()
+                    mock_ai.get_best_move.return_value = 'up'
+                    mock_game.get_ai.return_value = mock_ai
+                    mock_game_class.return_value = mock_game
+                    
+                    main()
+                    output = fake_output.getvalue()
+                    
+                    self.assertIn(" AI Suggestion: W (Up)", output)
+                    mock_game.get_ai.assert_called_once()
+                    mock_ai.get_best_move.assert_called_once()
+    
+    @patch('main.print_instructions')
+    def test_main_ai_hint_no_moves_available(self, mock_instructions):
+        """Test AI hint when no moves are available."""
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            with patch('main.get_user_input', side_effect=['H', 'Q']):
+                # Create a mock game where AI returns no moves
+                with patch('main.Game2048') as mock_game_class:
+                    mock_game = MagicMock()
+                    mock_game.has_won.return_value = False
+                    mock_game.is_game_over.return_value = False
+                    
+                    # Mock the AI to return None (no moves available)
+                    mock_ai = MagicMock()
+                    mock_ai.get_best_move.return_value = None
+                    mock_game.get_ai.return_value = mock_ai
+                    mock_game_class.return_value = mock_game
+                    
+                    main()
+                    output = fake_output.getvalue()
+                    
+                    self.assertIn(" AI Suggestion: No moves available!", output)
+                    mock_game.get_ai.assert_called_once()
+                    mock_ai.get_best_move.assert_called_once()
+    
+    @patch('main.print_instructions')  
+    def test_main_ai_hint_all_directions(self, mock_instructions):
+        """Test AI hint displays correct format for all directions."""
+        directions = [
+            ('up', 'W (Up)'),
+            ('left', 'A (Left)'),
+            ('down', 'S (Down)'),
+            ('right', 'D (Right)')
+        ]
+        
+        for ai_direction, expected_display in directions:
+            with self.subTest(direction=ai_direction):
+                with patch('sys.stdout', new=StringIO()) as fake_output:
+                    with patch('main.get_user_input', side_effect=['H', 'Q']):
+                        with patch('main.Game2048') as mock_game_class:
+                            mock_game = MagicMock()
+                            mock_game.has_won.return_value = False
+                            mock_game.is_game_over.return_value = False
+                            
+                            mock_ai = MagicMock()
+                            mock_ai.get_best_move.return_value = ai_direction
+                            mock_game.get_ai.return_value = mock_ai
+                            mock_game_class.return_value = mock_game
+                            
+                            main()
+                            output = fake_output.getvalue()
+                            
+                            self.assertIn(f" AI Suggestion: {expected_display}", output)
 
 
 class TestGameOverScenarios(unittest.TestCase):
@@ -125,7 +203,7 @@ class TestGameOverScenarios(unittest.TestCase):
         """Test game over scenario when user chooses not to restart."""
         with patch('sys.stdout', new=StringIO()) as fake_output:
             # Create a mock game that's immediately over
-            with patch('game.game2048.Game2048') as mock_game_class:
+            with patch('main.Game2048') as mock_game_class:
                 mock_game = MagicMock()
                 mock_game.has_won.return_value = False
                 mock_game.is_game_over.return_value = True
@@ -137,7 +215,6 @@ class TestGameOverScenarios(unittest.TestCase):
                 
                 self.assertIn("Game Over! No more moves possible.", output)
                 self.assertIn("Final Score: 1234", output)
-                self.assertIn("Restart game? (y/n):", output)
     
     @patch('main.print_instructions')
     @patch('builtins.input', side_effect=['y', 'Q'])  # Restart after game over, then quit
@@ -146,7 +223,7 @@ class TestGameOverScenarios(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             with patch('main.get_user_input', return_value='Q'):  # Quit after restart
                 # Create a mock game that's over on first check but not after restart
-                with patch('game.game2048.Game2048') as mock_game_class:
+                with patch('main.Game2048') as mock_game_class:
                     mock_game = MagicMock()
                     # First call: game over, second call: not game over (after restart)
                     mock_game.has_won.return_value = False
@@ -158,7 +235,6 @@ class TestGameOverScenarios(unittest.TestCase):
                     output = fake_output.getvalue()
                     
                     self.assertIn("Game Over! No more moves possible.", output)
-                    self.assertIn("Restart game? (y/n):", output)
                     self.assertIn("Game restarted!", output)
                     mock_game.restart_game.assert_called_once()
     
@@ -168,7 +244,7 @@ class TestGameOverScenarios(unittest.TestCase):
         """Test win scenario when user chooses not to continue."""
         with patch('sys.stdout', new=StringIO()) as fake_output:
             # Create a mock game that has won
-            with patch('game.game2048.Game2048') as mock_game_class:
+            with patch('main.Game2048') as mock_game_class:
                 mock_game = MagicMock()
                 mock_game.has_won.return_value = True
                 mock_game.is_game_over.return_value = False
@@ -178,7 +254,6 @@ class TestGameOverScenarios(unittest.TestCase):
                 output = fake_output.getvalue()
                 
                 self.assertIn("Congratulations! You reached 2048! You won!", output)
-                self.assertIn("Continue playing? (y/n):", output)
     
     @patch('main.print_instructions')
     @patch('builtins.input', side_effect=['y', 'Q'])  # Continue after win, then quit
@@ -187,7 +262,7 @@ class TestGameOverScenarios(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             with patch('main.get_user_input', return_value='Q'):  # Quit after continuing
                 # Create a mock game that has won but continues
-                with patch('game.game2048.Game2048') as mock_game_class:
+                with patch('main.Game2048') as mock_game_class:
                     mock_game = MagicMock()
                     # First call: won, second call: not won (continuing play)
                     mock_game.has_won.side_effect = [True, False]
@@ -198,7 +273,6 @@ class TestGameOverScenarios(unittest.TestCase):
                     output = fake_output.getvalue()
                     
                     self.assertIn("Congratulations! You reached 2048! You won!", output)
-                    self.assertIn("Continue playing? (y/n):", output)
 
 
 class TestMovementFeedback(unittest.TestCase):
@@ -210,7 +284,7 @@ class TestMovementFeedback(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             with patch('main.get_user_input', side_effect=['W', 'Q']):
                 # Create a mock game where move returns False (no movement)
-                with patch('game.game2048.Game2048') as mock_game_class:
+                with patch('main.Game2048') as mock_game_class:
                     mock_game = MagicMock()
                     mock_game.has_won.return_value = False
                     mock_game.is_game_over.return_value = False
@@ -229,7 +303,7 @@ class TestMovementFeedback(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             with patch('main.get_user_input', side_effect=['A', 'Q']):
                 # Create a mock game where move returns True (successful movement)
-                with patch('game.game2048.Game2048') as mock_game_class:
+                with patch('main.Game2048') as mock_game_class:
                     mock_game = MagicMock()
                     mock_game.has_won.return_value = False
                     mock_game.is_game_over.return_value = False

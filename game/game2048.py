@@ -174,3 +174,12 @@ class Game2048:
                 if self._board.get_cell(i, j) == 2048:
                     return True
         return False
+    
+    def get_ai(self):
+        """Get an AI instance for this game.
+        
+        Returns:
+            GameAI: AI instance that can analyze and suggest moves
+        """
+        from .game_ai import GameAI
+        return GameAI(self)

@@ -11,6 +11,7 @@ from .test_helper_methods import TestHelperMethods, TestBoardOperations
 from .test_movement import TestMovement
 from .test_main import TestMainCLI, TestMainGameLoop, TestGameOverScenarios, TestMovementFeedback
 from .test_integration import TestIntegration
+from .test_game_ai import TestBestMoveSelection, TestBoardEvaluation, TestGameAI, TestGameIntegration, TestMonotonicDetection
 
 
 def create_test_suite():
@@ -23,6 +24,12 @@ def create_test_suite():
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestHelperMethods))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestBoardOperations))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMovement))
+    # Heuristic Eval
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestBestMoveSelection))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestBoardEvaluation))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestGameAI))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestGameIntegration))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestMonotonicDetection))
     
     # Add main CLI test classes
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMainCLI))
