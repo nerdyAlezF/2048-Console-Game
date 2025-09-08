@@ -6,10 +6,11 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import all test modules
-from .test_initialization import TestGameInitialization
-from .test_helper_methods import TestHelperMethods
+from .test_initialization import TestGameInitialization, TestGameStateManagement
+from .test_helper_methods import TestHelperMethods, TestBoardOperations
 from .test_movement import TestMovement
 from .test_main import TestMainCLI, TestMainGameLoop, TestGameOverScenarios, TestMovementFeedback
+from .test_integration import TestIntegration
 
 
 def create_test_suite():
@@ -18,7 +19,9 @@ def create_test_suite():
     
     # Add all test classes
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestGameInitialization))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestGameStateManagement))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestHelperMethods))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestBoardOperations))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMovement))
     
     # Add main CLI test classes
@@ -26,6 +29,9 @@ def create_test_suite():
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMainGameLoop))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestGameOverScenarios))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMovementFeedback))
+    
+    # Add integration tests
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIntegration))
     
     return suite
 

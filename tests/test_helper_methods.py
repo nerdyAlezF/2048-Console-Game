@@ -146,6 +146,80 @@ class TestBoardOperations(unittest.TestCase):
         # Verify it's a deep copy
         self.board.set_cell(0, 0, 16)
         self.assertEqual(copied_board.get_cell(0, 0), 4)  # Should not change
+    
+    def test_import_state_2d_list(self):
+        """Test importing board state from 2D list."""
+        state = [
+            [2, 4, 8, 16],
+            [32, 64, 128, 256],
+            [512, 1024, 0, 2],
+            [4, 8, 16, 32]
+        ]
+        
+        self.board.import_state(state)
+        
+        # Verify import worked correctly
+        for i in range(4):
+            for j in range(4):
+                self.assertEqual(self.board.get_cell(i, j), state[i][j])
+    
+    def test_import_state_flat_list(self):
+        """Test importing board state from flat list."""
+        # Flat list: row-major order
+        state = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 0, 2, 4, 8, 16, 32]
+        
+        self.board.import_state(state)
+        
+        # Verify import worked correctly
+        expected = [
+            [2, 4, 8, 16],
+            [32, 64, 128, 256],
+            [512, 1024, 0, 2],
+            [4, 8, 16, 32]
+        ]
+        
+        for i in range(4):
+            for j in range(4):
+                self.assertEqual(self.board.get_cell(i, j), expected[i][j])
+    
+    def test_export_state_2d(self):
+        """Test exporting board state as 2D list."""
+        # Set up known state
+        expected = [
+            [2, 4, 8, 16],
+            [32, 64, 128, 256],
+            [512, 1024, 0, 2],
+            [4, 8, 16, 32]
+        ]
+        
+        for i in range(4):
+            for j in range(4):
+                self.board.set_cell(i, j, expected[i][j])
+        
+        # Export and verify
+        exported = self.board.export_state()
+        self.assertEqual(exported, expected)
+    
+    
+    def test_import_state_invalid_2d_size(self):
+        """Test error handling for invalid 2D import size."""
+        # Wrong dimensions
+        invalid_state = [
+            [2, 4, 8],  # Only 3 columns
+            [32, 64, 128],
+            [512, 1024, 0]
+        ]
+        
+        with self.assertRaises(ValueError):
+            self.board.import_state(invalid_state)
+    
+    def test_import_state_invalid_flat_size(self):
+        """Test error handling for invalid flat import size."""
+        # Wrong number of elements (should be 16 for 4x4)
+        invalid_state = [2, 4, 8, 16, 32, 64, 128, 256, 512]  # Only 9 elements
+        
+        with self.assertRaises(ValueError):
+            self.board.import_state(invalid_state)
 
 
 if __name__ == '__main__':

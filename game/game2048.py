@@ -81,6 +81,43 @@ class Game2048:
         self._tile_generator.add_random_tile(self._board)
         self._tile_generator.add_random_tile(self._board)
     
+    def import_board_state(self, board_state, score=None):
+        """Import a specific board state for testing or game setup.
+        
+        Args:
+            board_state: Either a 2D list [[row1], [row2], ...] or 
+                        a flat list [cell1, cell2, ...] with size*size elements
+            score: Optional score to set (defaults to current score)
+        """
+        self._board.import_state(board_state)
+        if score is not None:
+            self._score = score
+    
+    def export_board_state(self):
+        """Export the current board state as a 2D list.
+            
+        Returns:
+            Tuple of (board_state, score)
+        """
+        return self._board.export_state(), self._score
+    
+    @classmethod
+    def from_state(cls, board_state, score=0, tile_2_probability=0.9, size=4):
+        """Create a game instance with a specific board state.
+        
+        Args:
+            board_state: Initial board state
+            score: Initial score
+            tile_2_probability: Probability of generating 2s vs 4s
+            size: Board size
+            
+        Returns:
+            Game2048 instance with the specified state
+        """
+        game = cls(tile_2_probability, size)
+        game.import_board_state(board_state, score)
+        return game
+    
     # Public API - Game State (Read-only)
     def get_score(self):
         """Get the current score."""

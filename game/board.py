@@ -54,3 +54,32 @@ class Board:
         if not isinstance(other, Board) or self.size != other.size:
             return False
         return self.grid == other.grid
+    
+    def import_state(self, board_state):
+        """Import a board state from a 2D list or flat list.
+        
+        Args:
+            board_state: Either a 2D list [[row1], [row2], ...] or 
+                        a flat list [cell1, cell2, ...] with size*size elements
+        """
+        if isinstance(board_state[0], list):
+            # 2D list format
+            if len(board_state) != self.size or len(board_state[0]) != self.size:
+                raise ValueError(f"Board state must be {self.size}x{self.size}")
+            self.grid = [row[:] for row in board_state]
+        else:
+            # Flat list format
+            if len(board_state) != self.size * self.size:
+                raise ValueError(f"Board state must have {self.size * self.size} elements")
+            self.grid = []
+            for i in range(self.size):
+                row = board_state[i * self.size:(i + 1) * self.size]
+                self.grid.append(row)
+    
+    def export_state(self):
+        """Export the current board state as a 2D list.
+            
+        Returns:
+            Board state as 2D list
+        """
+        return [row[:] for row in self.grid]
