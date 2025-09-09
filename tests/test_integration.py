@@ -81,11 +81,14 @@ class TestIntegration(unittest.TestCase):
         self.assertTrue(moved)
         self.assertEqual(game.get_score(), 8)  # Two merges: 4+4 = 8 points
         
-        # Check resulting board: should have [4, 4, 0, 0] + one new tile
+        # Check resulting board: should have [4, 4, _, _] where _ could be 0 or new tile
         self.assertEqual(game._board.get_cell(0, 0), 4)
         self.assertEqual(game._board.get_cell(0, 1), 4)
-        self.assertEqual(game._board.get_cell(0, 2), 0)
-        self.assertEqual(game._board.get_cell(0, 3), 0)
+        
+        # Should have exactly 3 non-zero tiles (the two merged 4s + 1 new random tile)
+        non_zero_count = sum(1 for i in range(4) for j in range(4) 
+                           if game._board.get_cell(i, j) != 0)
+        self.assertEqual(non_zero_count, 3)
     
     def test_win_condition_detection(self):
         """Test win condition with specific board setup."""
