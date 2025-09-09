@@ -87,6 +87,16 @@ class TestMainGameLoop(unittest.TestCase):
             self.assertIn("Thanks for playing!", output)
             mock_instructions.assert_called_once()
     
+    @patch('main.get_user_input', return_value='Q')
+    @patch('main.print_instructions')
+    def test_main_displays_controls_reminder(self, mock_instructions, mock_input):
+        """Test that controls reminder is displayed during gameplay."""
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            main()
+            output = fake_output.getvalue()
+            self.assertIn("Controls: W/A/S/D=Move  H=AI Hint  R=Restart  Q=Quit", output)
+            mock_instructions.assert_called_once()
+    
     @patch('main.get_user_input', side_effect=['X', 'Q'])
     @patch('main.print_instructions')
     def test_main_invalid_input(self, mock_instructions, mock_input):
@@ -136,7 +146,7 @@ class TestMainGameLoop(unittest.TestCase):
                     main()
                     output = fake_output.getvalue()
                     
-                    self.assertIn(" AI Suggestion: W (Up)", output)
+                    self.assertIn(" Heuristic-Model Suggestion: W (Up)", output)
                     mock_game.get_ai.assert_called_once()
                     mock_ai.get_best_move.assert_called_once()
     
@@ -160,7 +170,7 @@ class TestMainGameLoop(unittest.TestCase):
                     main()
                     output = fake_output.getvalue()
                     
-                    self.assertIn(" AI Suggestion: No moves available!", output)
+                    self.assertIn(" Heuristic-Model Suggestion: No moves available!", output)
                     mock_game.get_ai.assert_called_once()
                     mock_ai.get_best_move.assert_called_once()
     
@@ -191,7 +201,7 @@ class TestMainGameLoop(unittest.TestCase):
                             main()
                             output = fake_output.getvalue()
                             
-                            self.assertIn(f" AI Suggestion: {expected_display}", output)
+                            self.assertIn(f" Heuristic-Model Suggestion: {expected_display}", output)
 
 
 class TestGameOverScenarios(unittest.TestCase):

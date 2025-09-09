@@ -42,6 +42,7 @@ def main():
         # Display current game state
         print("\n")
         game.display_game()
+        print("Controls: W/A/S/D=Move  H=AI Hint  R=Restart  Q=Quit")
         
         # Check win condition
         if game.has_won():
@@ -86,9 +87,9 @@ def main():
                     'down': 'S (Down)',
                     'right': 'D (Right)'
                 }
-                print(f"\n AI Suggestion: {move_names[best_move]}")
+                print(f"\n Heuristic-Model Suggestion: {move_names[best_move]}")
             else:
-                print("\n AI Suggestion: No moves available!")
+                print("\n Heuristic-Model Suggestion: No moves available!")
             continue
         elif move == 'W':
             moved = game.move_up()

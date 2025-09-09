@@ -12,18 +12,17 @@ This implementation focuses on clean architecture, testability, and correctness 
 - Accurate score tracking
 - Game-over detection when no valid moves remain
 - Console-based user interface
-- Board import and export
+- Board import/export for testing or debugging
 - AI move suggestion system with intelligent heuristics
 - Modular structure with comprehensive unit tests
 - Written Integration Test
 
 
-## AI System
-The game includes an intelligent AI assistant that analyzes the board state and suggests
-optimal moves using:
+## AI System (Offline Heuristic Model)
+AI assistant that analyzes the board state and suggests optimal moves using board heuristics:
 - Empty tile counting (more empty tiles = better position)
 - Monotonicity scoring (ascending sequences preferred)
-- Corner positioning bonus (largest tile in corner = strategic advantage)
+- Max-tile corner bonus
 
 Press **H** during gameplay to get AI move suggestions.
 
@@ -64,17 +63,46 @@ python3 -m unittest tests.test_game2048 -v
 Individual test modules:
 
 ```bash
-python3 -m unittest tests.test_initialization -v
-python3 -m unittest tests.test_movement -v
-python3 -m unittest tests.test_main -v
-python3 -m unittest tests.test_game_ai -v
-python3 -m unittest tests.test_helper_methods -v
+python3 -m unittest tests.test_main -v            # CLI and game loop tests
+python3 -m unittest tests.test_game_ai -v         # AI suggestion system tests
+python3 -m unittest tests.test_movement -v        # Tile movement logic tests
+python3 -m unittest tests.test_initialization -v  # Game setup tests
+python3 -m unittest tests.test_helper_methods -v  # Board operations tests
+python3 -m unittest tests.test_integration -v     # Integration tests
 ```
 
-Run integration tests:
+---
+
+## Test Coverage
+Achieved overall 97% code coverage using [`coverage.py`](https://coverage.readthedocs.io/).
+
+To analyze test coverage and ensure code quality:
+
+### Install Coverage Tool
 ```bash
-python3 -m unittest tests.test_integration -v
+pip install coverage
 ```
+
+#### Run Tests with Coverage Analysis
+```bash
+coverage run -m unittest tests.test_game2048
+```
+
+### Generate Coverage Report
+
+#### Terminal report (excludes test files from analysis)
+coverage report --omit="tests/*"
+
+#### Detailed HTML report
+coverage html --omit="tests/*"
+
+---
+
+## Optional Future Enhancements
+- Integrate with Online AI model for more advanced hints
+- Support for larger board sizes, different scoring variants
+- Undo functionality
+- Further improve the integration test
 
 ---
 
