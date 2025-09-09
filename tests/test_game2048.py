@@ -12,6 +12,7 @@ from .test_movement import TestMovement
 from .test_main import TestMainCLI, TestMainGameLoop, TestGameOverScenarios, TestMovementFeedback
 from .test_integration import TestIntegration
 from .test_game_ai import TestBestMoveSelection, TestBoardEvaluation, TestGameAI, TestGameIntegration, TestMonotonicityAndCornerHeuristics
+from .test_claude_ai import TestClaudeAI
 
 
 def create_test_suite():
@@ -30,6 +31,9 @@ def create_test_suite():
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestGameAI))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestGameIntegration))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestMonotonicityAndCornerHeuristics))
+    
+    # Add Claude AI tests
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestClaudeAI))
     
     # Add main CLI test classes
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMainCLI))

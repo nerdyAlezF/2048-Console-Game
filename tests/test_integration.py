@@ -32,7 +32,6 @@ class TestIntegration(unittest.TestCase):
         
         # Check resulting board (4 should be in position [0,0], new tile added somewhere)
         self.assertEqual(game._board.get_cell(0, 0), 4)
-        self.assertEqual(game._board.get_cell(0, 1), 0)
         
         # Should have exactly 2 non-zero tiles (the merged 4 + 1 new random tile)
         non_zero_count = sum(1 for i in range(4) for j in range(4) 

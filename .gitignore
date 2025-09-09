@@ -85,9 +85,6 @@ $RECYCLE.BIN/
 # Claude Code related
 CLAUDE.md
 .claude/
-claude-*
-*claude*
-*.claude
 
 # Codex
 AGENTS.md

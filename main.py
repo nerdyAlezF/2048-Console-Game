@@ -17,7 +17,8 @@ def print_instructions():
     print("  A - Move Left") 
     print("  S - Move Down")
     print("  D - Move Right")
-    print("  H - AI Hint (get move suggestion)")
+    print("  H - Local Model Hint (get move suggestion)")
+    print("  C - Claude AI Hint (requires API key)")
     print("  R - Restart Game")
     print("  Q - Quit Game")
     print("="*50)
@@ -26,7 +27,7 @@ def print_instructions():
 def get_user_input():
     """Get and validate user input."""
     try:
-        move = input("\nEnter your move (W/A/S/D/H/R/Q): ").strip().upper()
+        move = input("\nEnter your move (W/A/S/D/H/C/R/Q): ").strip().upper()
         return move
     except (KeyboardInterrupt, EOFError):
         print("\nGame interrupted. Goodbye!")
@@ -42,7 +43,7 @@ def main():
         # Display current game state
         print("\n")
         game.display_game()
-        print("Controls: W/A/S/D=Move  H=AI Hint  R=Restart  Q=Quit")
+        print("Controls: W/A/S/D=Move  H=Local Model Hint  C=Claude AI  R=Restart  Q=Quit")
         
         # Check win condition
         if game.has_won():
@@ -87,9 +88,31 @@ def main():
                     'down': 'S (Down)',
                     'right': 'D (Right)'
                 }
-                print(f"\n Heuristic-Model Suggestion: {move_names[best_move]}")
+                print(f"\n Local Model Suggestion: {move_names[best_move]}")
             else:
-                print("\n Heuristic-Model Suggestion: No moves available!")
+                print("\n Local Model Suggestion: No moves available!")
+            continue
+        elif move == 'C':
+            # Get Claude AI hint
+            claude_ai = game.get_claude_ai()
+            if not claude_ai.is_available():
+                print("\n Claude AI: Not available")
+                print("   • Install: pip install anthropic")
+                print("   • Set ANTHROPIC_API_KEY environment variable")
+                continue
+            
+            print("\n Claude AI: Analyzing board state...")
+            best_move = claude_ai.get_best_move()
+            if best_move:
+                move_names = {
+                    'up': 'W (Up)',
+                    'left': 'A (Left)', 
+                    'down': 'S (Down)',
+                    'right': 'D (Right)'
+                }
+                print(f" Claude AI Suggestion: {move_names[best_move]}")
+            else:
+                print(" Claude AI: Unable to get suggestion (API error or no moves available)")
             continue
         elif move == 'W':
             moved = game.move_up()
@@ -100,7 +123,7 @@ def main():
         elif move == 'D':
             moved = game.move_right()
         else:
-            print("Invalid input! Use W/A/S/D/H/R to move or Q to quit.")
+            print("Invalid input! Use W/A/S/D/H/C/R to move or Q to quit.")
             continue
         
         # Provide feedback if no movement occurred

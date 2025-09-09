@@ -13,7 +13,7 @@ This implementation focuses on clean architecture, testability, and correctness 
 - Game-over detection when no valid moves remain
 - Console-based user interface
 - Board import/export for testing or debugging
-- AI move suggestion system with intelligent heuristics
+- AI move suggestion system with intelligent heuristics & Claude API
 - Modular structure with comprehensive unit tests
 - Written Integration Test
 
@@ -25,6 +25,24 @@ AI assistant that analyzes the board state and suggests optimal moves using boar
 - Max-tile corner bonus
 
 Press **H** during gameplay to get AI move suggestions.
+
+## Claude AI Integration (Optional)
+For advanced AI suggestions using Claude's reasoning capabilities:
+
+### Setup
+```bash
+# Install dependency
+pip install anthropic
+
+# Set your API key
+export ANTHROPIC_API_KEY=your_key_here
+```
+
+### Usage
+- Press **C** during gameplay for Claude AI suggestions
+
+### Remarks
+- Since I wasn't able to obtain a valid API key from Anthropic, the API call functionality wasn't tested yet.
 
 ---
 
@@ -46,7 +64,8 @@ python main.py
 - **A** - Move Left
 - **S** - Move Down
 - **D** - Move Right
-- **H** - Get AI Hint (move suggestion)
+- **H** - Get AI Hint (heuristic model)
+- **C** - Get Claude AI Hint (requires API key)
 - **R** - Restart Game
 - **Q** - Quit Game
 
@@ -104,7 +123,7 @@ coverage html --omit="tests/*"
 
 ## Optional Future Enhancements
 - Backtest and fine tune the Heuristic Model
-- Integrate with Online AI model for more advanced hints
+- Integrate with Claude AI model for more advanced hints once there is a valid API key.
 - Support for larger board sizes, different scoring variants
 - Undo functionality
 - Further improve the integration test

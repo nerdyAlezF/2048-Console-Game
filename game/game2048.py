@@ -183,3 +183,12 @@ class Game2048:
         """
         from .game_ai import GameAI
         return GameAI(self)
+    
+    def get_claude_ai(self):
+        """Get a Claude AI instance for this game.
+        
+        Returns:
+            ClaudeAI: Claude AI instance that can analyze and suggest moves via API
+        """
+        from .claude_ai import ClaudeAI
+        return ClaudeAI(self)

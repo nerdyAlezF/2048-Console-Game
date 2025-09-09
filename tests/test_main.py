@@ -26,7 +26,7 @@ class TestMainCLI(unittest.TestCase):
             self.assertIn("A - Move Left", output)
             self.assertIn("S - Move Down", output)
             self.assertIn("D - Move Right", output)
-            self.assertIn("H - AI Hint (get move suggestion)", output)
+            self.assertIn("H - Local Model Hint (get move suggestion)", output)
             self.assertIn("R - Restart Game", output)
             self.assertIn("Q - Quit Game", output)
     
@@ -35,7 +35,7 @@ class TestMainCLI(unittest.TestCase):
         """Test get_user_input with valid input."""
         result = get_user_input()
         self.assertEqual(result, 'W')
-        mock_input.assert_called_once_with("\nEnter your move (W/A/S/D/H/R/Q): ")
+        mock_input.assert_called_once_with("\nEnter your move (W/A/S/D/H/C/R/Q): ")
     
     @patch('builtins.input', return_value='  a  ')
     def test_get_user_input_case_insensitive_and_strips(self, mock_input):
@@ -94,7 +94,7 @@ class TestMainGameLoop(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             main()
             output = fake_output.getvalue()
-            self.assertIn("Controls: W/A/S/D=Move  H=AI Hint  R=Restart  Q=Quit", output)
+            self.assertIn("Controls: W/A/S/D=Move  H=Local Model Hint  C=Claude AI  R=Restart  Q=Quit", output)
             mock_instructions.assert_called_once()
     
     @patch('main.get_user_input', side_effect=['X', 'Q'])
@@ -104,7 +104,7 @@ class TestMainGameLoop(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fake_output:
             main()
             output = fake_output.getvalue()
-            self.assertIn("Invalid input! Use W/A/S/D/H/R to move or Q to quit.", output)
+            self.assertIn("Invalid input! Use W/A/S/D/H/C/R to move or Q to quit.", output)
     
     @patch('main.print_instructions')
     def test_main_restart_during_game(self, mock_instructions):
@@ -146,7 +146,7 @@ class TestMainGameLoop(unittest.TestCase):
                     main()
                     output = fake_output.getvalue()
                     
-                    self.assertIn(" Heuristic-Model Suggestion: W (Up)", output)
+                    self.assertIn(" Local Model Suggestion: W (Up)", output)
                     mock_game.get_ai.assert_called_once()
                     mock_ai.get_best_move.assert_called_once()
     
@@ -170,7 +170,7 @@ class TestMainGameLoop(unittest.TestCase):
                     main()
                     output = fake_output.getvalue()
                     
-                    self.assertIn(" Heuristic-Model Suggestion: No moves available!", output)
+                    self.assertIn(" Local Model Suggestion: No moves available!", output)
                     mock_game.get_ai.assert_called_once()
                     mock_ai.get_best_move.assert_called_once()
     
@@ -201,7 +201,7 @@ class TestMainGameLoop(unittest.TestCase):
                             main()
                             output = fake_output.getvalue()
                             
-                            self.assertIn(f" Heuristic-Model Suggestion: {expected_display}", output)
+                            self.assertIn(f" Local Model Suggestion: {expected_display}", output)
 
 
 class TestGameOverScenarios(unittest.TestCase):
