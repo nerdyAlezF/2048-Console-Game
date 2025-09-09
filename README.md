@@ -91,10 +91,14 @@ coverage run -m unittest tests.test_game2048
 ### Generate Coverage Report
 
 #### Terminal report (excludes test files from analysis)
+```bash
 coverage report --omit="tests/*"
+```
 
 #### Detailed HTML report
+```bash
 coverage html --omit="tests/*"
+```
 
 ---
 
