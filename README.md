@@ -103,6 +103,7 @@ coverage html --omit="tests/*"
 ---
 
 ## Optional Future Enhancements
+- Backtest and fine tune the Heuristic Model
 - Integrate with Online AI model for more advanced hints
 - Support for larger board sizes, different scoring variants
 - Undo functionality
