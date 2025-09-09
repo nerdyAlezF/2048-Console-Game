@@ -93,7 +93,7 @@ python3 -m unittest tests.test_integration -v     # Integration tests
 ---
 
 ## Test Coverage
-Achieved overall 97% code coverage using [`coverage.py`](https://coverage.readthedocs.io/).
+Achieved overall 93% code coverage using [`coverage.py`](https://coverage.readthedocs.io/).
 
 To analyze test coverage and ensure code quality:
 
